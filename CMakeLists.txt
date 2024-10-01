@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 project(sbg_driver)
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
@@ -14,6 +16,7 @@ find_package(tf2_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(Boost REQUIRED)
+find_package(sam_msgs REQUIRED)
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -126,6 +129,14 @@ target_link_libraries(sbg_device_mag "${cpp_typesupport_target}")
 set_property(TARGET sbg_device PROPERTY CXX_STANDARD 14)
 set_property(TARGET sbg_device_mag PROPERTY CXX_STANDARD 14)
 
+# Install Python modules
+ament_python_install_package(scripts)
+
+# Install Python executables
+install(PROGRAMS
+  scripts/sbg_to_ros.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 #############
 ## Install ##
 #############
