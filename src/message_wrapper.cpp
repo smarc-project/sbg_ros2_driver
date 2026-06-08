@@ -1025,7 +1025,7 @@ const sensor_msgs::msg::Imu MessageWrapper::createRosImuMessage(const sbg_driver
   imu_ros_message.orientation                       = ref_sbg_quat_msg.quaternion;
   imu_ros_message.angular_velocity          = ref_sbg_imu_msg.delta_angle;
   imu_ros_message.linear_acceleration       = ref_sbg_imu_msg.delta_vel;
-
+  
   imu_ros_message.orientation_covariance[0] = ref_sbg_quat_msg.accuracy.x * ref_sbg_quat_msg.accuracy.x;
   imu_ros_message.orientation_covariance[4] = ref_sbg_quat_msg.accuracy.y * ref_sbg_quat_msg.accuracy.y;
   imu_ros_message.orientation_covariance[8] = ref_sbg_quat_msg.accuracy.z * ref_sbg_quat_msg.accuracy.z;

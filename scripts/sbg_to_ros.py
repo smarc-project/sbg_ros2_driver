@@ -17,17 +17,10 @@ class SBG2ROS(Node):
         imu_msg.header.frame_id = self.imu_frame
         imu_msg.header.stamp = sbg_imu.header.stamp
 
-        # NED to ENU
-        imu_msg.orientation.x = sbg_quat.quaternion.y
-        imu_msg.orientation.y = sbg_quat.quaternion.x
-        imu_msg.orientation.z = - sbg_quat.quaternion.z
-        imu_msg.orientation.w = sbg_quat.quaternion.w
-
-        (roll, pitch, yaw) = euler_from_quaternion([imu_msg.orientation.x,
-                                                                      imu_msg.orientation.y, 
-                                                                      imu_msg.orientation.z,
-                                                                      imu_msg.orientation.w])
- 
+        (roll, pitch, yaw) = euler_from_quaternion([sbg_quat.quaternion.x,
+                                                    sbg_quat.quaternion.y, 
+                                                    sbg_quat.quaternion.z,
+                                                    sbg_quat.quaternion.w])
         
         quat_t = quaternion_from_euler(roll, pitch, yaw+np.pi/2)
         imu_msg.orientation.x = quat_t[0]
@@ -39,18 +32,17 @@ class SBG2ROS(Node):
         imu_msg.orientation_covariance[4] = 0.01
         imu_msg.orientation_covariance[8] = 0.01
         
-        imu_msg.angular_velocity.x = sbg_imu.gyro.y
-        imu_msg.angular_velocity.y = sbg_imu.gyro.x
-        imu_msg.angular_velocity.z = -sbg_imu.gyro.z
+        imu_msg.angular_velocity.x = sbg_imu.gyro.x
+        imu_msg.angular_velocity.y = sbg_imu.gyro.y
+        imu_msg.angular_velocity.z = sbg_imu.gyro.z
         imu_msg.angular_velocity_covariance = [0.]*9
         imu_msg.angular_velocity_covariance[0] = 0.01
         imu_msg.angular_velocity_covariance[4] = 0.01
         imu_msg.angular_velocity_covariance[8] = 0.01
 
-
-        imu_msg.linear_acceleration.x = sbg_imu.accel.y
-        imu_msg.linear_acceleration.y = sbg_imu.accel.x
-        imu_msg.linear_acceleration.z = -sbg_imu.accel.z
+        imu_msg.linear_acceleration.x = - sbg_imu.accel.x
+        imu_msg.linear_acceleration.y = - sbg_imu.accel.y
+        imu_msg.linear_acceleration.z = - sbg_imu.accel.z
         
         imu_msg.linear_acceleration_covariance = [0.] * 9
         imu_msg.linear_acceleration_covariance[0] = 100
@@ -77,13 +69,12 @@ class SBG2ROS(Node):
         self.imu_quat_sub = message_filters.Subscriber(self, SbgEkfQuat,self.sbg_quat_top)
         # self.imu_mag_sub = message_filters.Subscriber(self.sbg_mag_top, SbgMag)
 
+        self.imu_pub = self.create_publisher(Imu,self.sbg_imu_out,  qos_profile=10)
+        
         self.ts = message_filters.ApproximateTimeSynchronizer([self.imu_data_sub, 
                                                                self.imu_quat_sub],
-                                                               1, slop=0.2, allow_headerless=False)
+                                                               1, slop=0.1, allow_headerless=False)
         self.ts.registerCallback(self.sbg_cb)
-
-        self.imu_pub = self.create_publisher(Imu,self.sbg_imu_out,  qos_profile=10)
-
 
 
 def main(args =None):
@@ -91,8 +82,8 @@ def main(args =None):
     pi = SBG2ROS()
     try:
         rclpy.spin(pi)
-    except: 
-        rclpy.shutdown()
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":

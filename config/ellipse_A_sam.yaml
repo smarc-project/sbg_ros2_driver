@@ -21,7 +21,7 @@
       initFrameId: "map"
 
     # Configuration of the device with ROS.
-    confWithRos: false
+    confWithRos: true
     
     # Uart configuration
     uartConf:
@@ -79,7 +79,7 @@
       # 3 ALIGNMENT_RIGHT     IMU Axis is turned in vehicle's right direction
       # 4 ALIGNMENT_UP        IMU Axis is turned in vehicle's up direction
       # 5 ALIGNMENT_DOWN      IMU Axis is turned in vehicle's down direction
-      axisDirectionY: 2
+      axisDirectionY: 3
       # Residual roll error after axis alignment rad
       misRoll: 0.0
       # Residual pitch error after axis alignment rad
@@ -132,7 +132,7 @@
       # 0 Measurement is not taken into account
       # 1 Measurement is rejected if inconsistent with current estimate (depending on error model)
       # 2 Measurement is always accepted
-      magnetometerRejectMode: 1
+      magnetometerRejectMode: 2
     
       # Theses parameters are only used for a calibration run
       calibration:
@@ -258,12 +258,12 @@
       #
       # true : ENU convention (X east, Y north, Z up)
       # false (default): NED convention (X north, Y east, Z down)
-      use_enu: false
+      use_enu: true
 
       # Frame ID:
       # Note: If the frame convention is NED so the default frame ID is (imu_link_ned)
       #       else if the convention is ENU so the default frame ID is (imu_link)
-      frame_id: "sbg_link"
+      frame_id: "imu_sbg"
     
       # Status general, clock, com aiding, solution, heave
       log_status: 8
